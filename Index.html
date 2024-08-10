@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Example</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
+        button { margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>CRUD Example</h1>
+    <form id="itemForm">
+        <input type="hidden" id="itemId">
+        <label for="itemName">Item Name:</label>
+        <input type="text" id="itemName" required>
+        <button type="submit">Add/Update Item</button>
+    </form>
+    
+    <table id="itemTable">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    
+    <script>
+        let items = [];
+        let editingIndex = -1;
+        
+        document.getElementById('itemForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const itemName = document.getElementById('itemName').value;
+            if (editingIndex >= 0) {
+                items[editingIndex] = itemName;
+                editingIndex = -1;
+            } else {
+                items.push(itemName);
+            }
+            
+            document.getElementById('itemName').value = '';
+            renderTable();
+        });
+        
+        function renderTable() {
+            const tbody = document.getElementById('itemTable').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+            
+            items.forEach((item, index) => {
+                const row = tbody.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                
+                cell1.textContent = item;
+                cell2.innerHTML = `<button onclick="editItem(${index})">Edit</button> <button onclick="deleteItem(${index})">Delete</button>`;
+            });
+        }
+        
+        function editItem(index) {
+            document.getElementById('itemName').value = items[index];
+            editingIndex = index;
+        }
+        
+        function deleteItem(index) {
+            items.splice(index, 1);
+            renderTable();
+        }
+    </script>
+</body>
+</html>
